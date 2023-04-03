@@ -72,16 +72,10 @@ void Tree::bfs() {
     }
 }
 
-void Tree::RootToAll(int argc, char** argv) {
+void Tree::RootToAll(int rank) {
     if (!root) {
         return;
     }
-
-    int rank, size;
-
-    MPI_Init(&argc, &argv);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
 
     std::string message("Good morning world!");
 
@@ -105,12 +99,6 @@ void Tree::RootToAll(int argc, char** argv) {
         if (node->left) q.push(node->left);
         if (node->right) q.push(node->right);
     }
-
-    if (rank == 0) {
-        print();
-    }
-
-    MPI_Finalize();
 }
 
 void Tree::remove(Node* root) {
@@ -124,7 +112,6 @@ void Tree::remove(Node* root) {
 
 Tree::~Tree() {
     this->remove(root);
-    root = nullptr;
 }
 
 void Tree::print_tree_level(Node* top, int level) {

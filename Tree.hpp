@@ -31,5 +31,5 @@ public:
 
     void print();
 
-    void RootToAll(int argc, char** argv);
+    void RootToAll(int rank);
 };

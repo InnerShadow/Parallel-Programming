@@ -124,6 +124,7 @@ void Tree::remove(Node* root) {
 
 Tree::~Tree() {
     this->remove(root);
+    root = nullptr;
 }
 
 void Tree::print_tree_level(Node* top, int level) {

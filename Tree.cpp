@@ -106,12 +106,13 @@ void Tree::remove(Node* root) {
         remove(root->left);
         remove(root->right);
         delete root;
-        root = NULL;
+        root = nullptr;
     }
 }
 
 Tree::~Tree() {
     this->remove(root);
+    root = nullptr;
 }
 
 void Tree::print_tree_level(Node* top, int level) {

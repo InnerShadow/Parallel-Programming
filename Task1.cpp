@@ -2,6 +2,11 @@
 #include "includs.hpp"
 #include "Tasks.hpp"
 
+//пология процессов – «двоичное полное дерево» из
+//sum(from i = 1, to n) 2^i
+//процессов.С помощью функций обменов осуществить :
+// передачу данных от процесса # 0 всем остальным процессам.
+
 static int getSum(int argc) {
     int sum = 0;
     for (size_t i = 0; i < argc; ++i) {

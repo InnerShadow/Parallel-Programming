@@ -4,9 +4,9 @@
 
 std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
 
-static void Get_next_2n_power(int size, int n, int rank, int* A, int q, int* B) {
-    int* buffer = new int[n * n / size]{};
-    int* Cbuffer = new int[n * n / size]{};
+static void Get_next_2n_power(int size, int n, int rank, unsigned long long int* A, int q, unsigned long long int* B) {
+    unsigned long long int* buffer = new unsigned long long int[n * n / size]{};
+    unsigned long long int* Cbuffer = new unsigned long long int[n * n / size]{};
 
     int* displs = new int[size];
     int* recvcounts = new int[size];
@@ -27,9 +27,9 @@ static void Get_next_2n_power(int size, int n, int rank, int* A, int q, int* B) 
         }
     }
 
-    MPI_Gatherv(buffer, recvcounts[rank], MPI_INT, A, recvcounts, displs, MPI_INT, q,
+    MPI_Gatherv(buffer, recvcounts[rank], MPI_UNSIGNED_LONG_LONG, A, recvcounts, displs, MPI_UNSIGNED_LONG_LONG, q,
         MPI_COMM_WORLD);
-    MPI_Bcast(A, n * n, MPI_INT, q, MPI_COMM_WORLD);
+    MPI_Bcast(A, n * n, MPI_UNSIGNED_LONG_LONG, q, MPI_COMM_WORLD);
 
     for (size_t i = start_line; i < start_line + n / size; ++i) {
         for (size_t j = 0; j < n; ++j) {
@@ -37,9 +37,9 @@ static void Get_next_2n_power(int size, int n, int rank, int* A, int q, int* B) 
         }
     }
 
-    MPI_Gatherv(Cbuffer, recvcounts[rank], MPI_INT, B, recvcounts, displs, MPI_INT, q,
+    MPI_Gatherv(Cbuffer, recvcounts[rank], MPI_UNSIGNED_LONG_LONG, B, recvcounts, displs, MPI_UNSIGNED_LONG_LONG, q,
         MPI_COMM_WORLD);
-    MPI_Bcast(B, n * n, MPI_INT, q, MPI_COMM_WORLD);
+    MPI_Bcast(B, n * n, MPI_UNSIGNED_LONG_LONG, q, MPI_COMM_WORLD);
     
 
     delete[] recvcounts;
@@ -49,7 +49,7 @@ static void Get_next_2n_power(int size, int n, int rank, int* A, int q, int* B) 
 int Task_3(int argc, char** argv) {
 
     int q = 0;
-    int n = 8 * 8 * 4 * 2 * 2;
+    int n = 8 ;
 
     MPI_Init(&argc, &argv);
 
@@ -57,8 +57,8 @@ int Task_3(int argc, char** argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    int* A = new int[n * n]{};
-    int* B = new int[n * n]{};
+    unsigned long long int* A = new unsigned long long int[n * n]{};
+    unsigned long long int* B = new unsigned long long int[n * n]{};
 
     for (size_t i = 0; i < n; ++i) {
         for (size_t j = 0; j < n; ++j) {
@@ -68,11 +68,11 @@ int Task_3(int argc, char** argv) {
     }
 
     if (rank == q) {
-        if (false) {
+        if (n == 8 ) {
             std::cout << "A:\n";
             for (size_t i = 0; i < n; ++i) {
                 for (size_t j = 0; j < n; ++j) {
-                    printf("%10d", A[i * n + j]);
+                    printf("%18llu", A[i * n + j]);
                 }
                 std::cout << "\n";
             }
@@ -85,11 +85,11 @@ int Task_3(int argc, char** argv) {
     }
 
     if (rank == q) {
-        if (false) {
+        if (n == 8 ) {
             std::cout << "B is: \n";
             for (size_t i = 0; i < n; ++i) {
                 for (size_t j = 0; j < n; ++j) {
-                    printf("%10d", B[i * n + j]);
+                    printf("%18llu", B[i * n + j]);
                 }
                 std::cout << "\n";
             }

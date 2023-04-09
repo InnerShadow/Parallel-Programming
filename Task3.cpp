@@ -18,8 +18,8 @@ static void Get_next_2n_power(int size, int n, int rank, unsigned long long int*
     size_t start_line = displs[rank] / n;
 
     for (size_t i = start_line; i < start_line + n / size; ++i) {
-        for (int j = 0; j < n; ++j) {
-            int sum = 0;
+        for (size_t j = 0; j < n; ++j) {
+            unsigned long long int sum = 0;
             for (size_t k = 0; k < n; ++k) {
                 sum += A[i * n + k] * A[k * n + j];
             }

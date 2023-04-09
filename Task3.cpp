@@ -6,7 +6,7 @@ std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
 
 static void Get_next_2n_power(int size, int n, int rank, unsigned long long int* A, int q, unsigned long long int* B) {
     unsigned long long int* buffer = new unsigned long long int[n * n / size]{};
-    unsigned long long int* Cbuffer = new unsigned long long int[n * n / size]{};
+    unsigned long long int* Bbuffer = new unsigned long long int[n * n / size]{};
 
     int* displs = new int[size];
     int* recvcounts = new int[size];
@@ -15,15 +15,15 @@ static void Get_next_2n_power(int size, int n, int rank, unsigned long long int*
         recvcounts[i] = n * (n / size);
     }
 
-    size_t start_line = displs[rank] / n;
+    size_t from = displs[rank] / n;
 
-    for (size_t i = start_line; i < start_line + n / size; ++i) {
+    for (size_t i = from; i < from + n / size; ++i) {
         for (size_t j = 0; j < n; ++j) {
             unsigned long long int sum = 0;
             for (size_t k = 0; k < n; ++k) {
                 sum += A[i * n + k] * A[k * n + j];
             }
-            buffer[(i - start_line) * n + j] = sum;
+            buffer[(i - from) * n + j] = sum;
         }
     }
 
@@ -31,17 +31,16 @@ static void Get_next_2n_power(int size, int n, int rank, unsigned long long int*
         MPI_COMM_WORLD);
     MPI_Bcast(A, n * n, MPI_UNSIGNED_LONG_LONG, q, MPI_COMM_WORLD);
 
-    for (size_t i = start_line; i < start_line + n / size; ++i) {
+    for (size_t i = from; i < from + n / size; ++i) {
         for (size_t j = 0; j < n; ++j) {
-            Cbuffer[(i - start_line) * n + j] += A[(i - start_line) * n + j] + B[(i - start_line) * n + j];
+            Bbuffer[(i - from) * n + j] += A[(i - from) * n + j] + B[(i - from) * n + j];
         }
     }
 
-    MPI_Gatherv(Cbuffer, recvcounts[rank], MPI_UNSIGNED_LONG_LONG, B, recvcounts, displs, MPI_UNSIGNED_LONG_LONG, q,
+    MPI_Gatherv(Bbuffer, recvcounts[rank], MPI_UNSIGNED_LONG_LONG, B, recvcounts, displs, MPI_UNSIGNED_LONG_LONG, q,
         MPI_COMM_WORLD);
     MPI_Bcast(B, n * n, MPI_UNSIGNED_LONG_LONG, q, MPI_COMM_WORLD);
     
-
     delete[] recvcounts;
     delete[] displs;
 }
@@ -72,7 +71,7 @@ int Task_3(int argc, char** argv) {
             std::cout << "A:\n";
             for (size_t i = 0; i < n; ++i) {
                 for (size_t j = 0; j < n; ++j) {
-                    printf("%18llu", A[i * n + j]);
+                    printf("%24llu", A[i * n + j]);
                 }
                 std::cout << "\n";
             }
@@ -89,7 +88,7 @@ int Task_3(int argc, char** argv) {
             std::cout << "B is: \n";
             for (size_t i = 0; i < n; ++i) {
                 for (size_t j = 0; j < n; ++j) {
-                    printf("%18llu", B[i * n + j]);
+                    printf("%24llu", B[i * n + j]);
                 }
                 std::cout << "\n";
             }

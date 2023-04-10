@@ -33,7 +33,7 @@ static void Get_next_2n_power(int size, int n, int rank, unsigned long long int*
 
     for (size_t i = from; i < from + n / size; ++i) {
         for (size_t j = 0; j < n; ++j) {
-            Bbuffer[(i - from) * n + j] += A[(i - from) * n + j] + B[(i - from) * n + j];
+            Bbuffer[(i - from) * n + j] += A[(from) * n + j] + B[(from) * n + j];
         }
     }
 

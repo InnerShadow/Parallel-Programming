@@ -51,7 +51,7 @@ int Task_1_4(int argc, char** argv) {
     //FromItoJ(rank, i, j, message, argc, argv);
 
     //From i to all
-    for (int j = 0; j < size; j++) {
+    for (size_t j = 0; j < size; ++j) {
         if (i != j) {
             FromItoJ(rank, i, j, message, argc, argv);
         }

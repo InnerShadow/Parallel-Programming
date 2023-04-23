@@ -3,6 +3,7 @@
 #include "includs.hpp"
 
 std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
+unsigned long long int t1;
 
 static void Get_next_2n_power(int size, int n, int rank, unsigned long long int* A, int q, unsigned long long int* B) {
     unsigned long long int* buffer = new unsigned long long int[n * n / size]{};
@@ -48,7 +49,7 @@ static void Get_next_2n_power(int size, int n, int rank, unsigned long long int*
 int Task_3(int argc, char** argv) {
 
     int q = 0;
-    int n = 8 ;
+    int n = 1024 ;
 
     MPI_Init(&argc, &argv);
 
@@ -71,12 +72,12 @@ int Task_3(int argc, char** argv) {
             std::cout << "A:\n";
             for (size_t i = 0; i < n; ++i) {
                 for (size_t j = 0; j < n; ++j) {
-                    printf("%24llu", A[i * n + j]);
+                    printf("%20llu", A[i * n + j]);
                 }
                 std::cout << "\n";
             }
         }
-        start_time = std::chrono::high_resolution_clock::now();
+        t1 = MPI_Wtime();
     }
 
     for (size_t i = 0; i < 3; ++i) {
@@ -88,7 +89,7 @@ int Task_3(int argc, char** argv) {
             std::cout << "B is: \n";
             for (size_t i = 0; i < n; ++i) {
                 for (size_t j = 0; j < n; ++j) {
-                    printf("%24llu", B[i * n + j]);
+                    printf("%20llu", B[i * n + j]);
                 }
                 std::cout << "\n";
             }
@@ -96,8 +97,12 @@ int Task_3(int argc, char** argv) {
 
         auto end_time = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-        std::cout << duration.count() << "\n";
+        //std::cout << duration.count() << "\n";
         std::ofstream file("M" + std::to_string(n) + "P" + std::to_string(size) + ".txt", std::ios::app);
+
+        unsigned long long int t2 = MPI_Wtime();
+        std::cout << "time " << t2 - t1 << std::endl;
+
         if (file.is_open()) {
             file << duration.count() << "\n";
             file.close();

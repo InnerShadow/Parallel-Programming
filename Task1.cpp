@@ -2,14 +2,6 @@
 #include "includs.hpp"
 #include "Tasks.hpp"
 
-static int getSum(int argc) {
-    int sum = 0;
-    for (size_t i = 0; i < argc; ++i) {
-        sum += std::pow(2, i);
-    }
-    return sum;
-}
-
 int Task_1(int argc, char** argv) {
 
     int rank, size;
@@ -24,7 +16,7 @@ int Task_1(int argc, char** argv) {
 
     tree.RootToAll(rank);
 
-    if (rank == 0) {
+    if (!rank) {
         tree.print();
     }
 

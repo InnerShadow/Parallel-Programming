@@ -18,7 +18,7 @@ static int OldTypeTusk(int argc, char** argv) {
     std::vector<int> B(n - rank);
     std::vector<int> A(n * size, 0);
 
-    for (size_t i = 0; i <= rank; ++i) {
+    for (size_t i = 0; i < n - rank; ++i) {
         B.at(i) = rank;
     }
 
@@ -39,9 +39,8 @@ static int OldTypeTusk(int argc, char** argv) {
         }
     }
 
-    //useless think
     for (size_t i = 0; i < size; ++i) {
-        for (size_t j = i + 1; j < n; ++j) {
+        for (size_t j = n - 1; j > n - rank - 1; --j) {
             A.at(getIndex(i, j, n)) = 0;
         }
     }
@@ -75,7 +74,7 @@ static int USSROption(int argc, char** argv) {
     std::vector<int> B(n - rank);
     std::vector<int> A(n * size);
 
-    for (size_t i = 0; i <= rank; ++i) {
+    for (size_t i = 0; i < n - rank; ++i) {
         B.at(i) = rank;
     }
 
@@ -89,7 +88,7 @@ static int USSROption(int argc, char** argv) {
     MPI_Allgatherv(B.data(), n - rank, MPI_INT, A.data(), recvcounts, displs, MPI_INT, MPI_COMM_WORLD);
 
     for (size_t i = 0; i < size; ++i) {
-        for (size_t j = i + 1; j < n; ++j) {
+        for (size_t j = n - 1; j > n - rank - 1; --j) {
             A.at(getIndex(i, j, n)) = 0;
         }
     }

@@ -1,7 +1,6 @@
 
 #include "includs.hpp"
 #include "Tasks.hpp"
-#include "omp.h"
 
 static void Get_next_2n_power(unsigned long long int* A, unsigned long long int* B, int size, int n) {
 
@@ -32,6 +31,8 @@ static void Get_next_2n_power(unsigned long long int* A, unsigned long long int*
 		}
 	
 	}
+
+	delete[] tmpA;
 }
 
 int Task_4(int argc, char** argv, int size) {
@@ -61,6 +62,7 @@ int Task_4(int argc, char** argv, int size) {
 
 	std::ofstream file("__OMP__M" + std::to_string(n) + "P" + std::to_string(size) + ".txt", std::ios::app);
 	if (file.is_open()) {
+		std::cout << end_time - start_time << "\n";
 		file << end_time - start_time << "\n";
 		file.close();
 	}
@@ -72,11 +74,15 @@ int Task_4(int argc, char** argv, int size) {
 	if (false) {
 		for (size_t i = 0; i < n; ++i) {
 			for (size_t j = 0; j < n; ++j) {
-				std::cout << B[i * n + j] << " ";
+				printf("%20llu", B[i * n + j]);
 			}
 			std::cout << "\n";
 		}
 	}
 
+	delete[] A;
+	delete[] B;
+
 	return 0;
 }
+

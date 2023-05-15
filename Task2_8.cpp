@@ -21,18 +21,26 @@ static int SCATTER(int argc, char** argv) {
 	}
 
 	int* B = nullptr;
+	int* BT = nullptr;
 	if (rank == root)
 	{
 		B = new int[n * size];
 		for (int i = 0; i < n; ++i) {
 			for (int j = 0; j < size; ++j) {
-				B[i * size + j] = j;
+				B[i * size + j] = i;
+			}
+		}
+
+		BT = new int[n * size];
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < size; ++j) {
+				BT[j * n + i] = B[i * size + j];
 			}
 		}
 
 	}
 
-	MPI_Scatter(B, size, MPI_INT, A, size, MPI_INT, root, MPI_COMM_WORLD);
+	MPI_Scatter(BT, n, MPI_INT, A, n, MPI_INT, root, MPI_COMM_WORLD);
 
 	int* AT = new int[n * m]{ 0 };
 	for (int i = 0; i < n; ++i) {
@@ -55,6 +63,7 @@ static int SCATTER(int argc, char** argv) {
 
 	if (rank == root) {
 		delete[] B;
+		delete[] BT;
 	}
 
 	MPI_Finalize();
@@ -80,32 +89,40 @@ static int OLD(int argc, char** argv) {
 	}
 
 	int* B = nullptr;
+	int* BT = nullptr;
 	if (rank == root)
 	{
 		B = new int[n * size];
 		for (int i = 0; i < n; ++i) {
 			for (int j = 0; j < size; ++j) {
-				B[i * size + j] = j;
+				B[i * size + j] = i;
+			}
+		}
+
+		BT = new int[n * size];
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < size; ++j) {
+				BT[j * n + i] = B[i * size + j];
 			}
 		}
 		
 		for (int i = 0; i < size; ++i) {
 			if (i != root) {
-				MPI_Send(B + i * size, size, MPI_INT, i, 0, MPI_COMM_WORLD);
+				MPI_Send(BT, n, MPI_INT, i, 0, MPI_COMM_WORLD);
 			}
 		}
 
-		for (int i = 0; i < size; ++i) {
-			A[i * n + k] = B[i];
+		for (int i = 0; i < n; ++i) {
+			A[i * n + k] = BT[i];
 		}
 
 	}
 
 	if (rank != root) {
-		int* Recive = new int[size];
-		MPI_Recv(Recive, size, MPI_INT, root, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		int* Recive = new int[n];
+		MPI_Recv(Recive, n, MPI_INT, root, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
-		for (int i = 0; i < size; ++i) {
+		for (int i = 0; i < n; ++i) {
 			A[i * n + k] = Recive[i];
 		}
 	}
@@ -123,6 +140,7 @@ static int OLD(int argc, char** argv) {
 
 	if (rank == root) {
 		delete[] B;
+		delete[] BT;
 	}
 
 	MPI_Finalize();

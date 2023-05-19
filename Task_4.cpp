@@ -37,8 +37,6 @@ static void Get_next_2n_power(unsigned long long int* A, unsigned long long int*
 
 int Task_4(int argc, char** argv, int size) {
 
-	int myid = 0;
-
 	int n = 8 * 8 * 4 * 2 * 2;
 
 	unsigned long long int* A = new unsigned long long int[n * n];
@@ -71,7 +69,7 @@ int Task_4(int argc, char** argv, int size) {
 		return 1;
 	}
 
-	if (false) {
+	if (n == 8) {
 		for (size_t i = 0; i < n; ++i) {
 			for (size_t j = 0; j < n; ++j) {
 				printf("%20llu", B[i * n + j]);

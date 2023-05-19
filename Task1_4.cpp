@@ -11,8 +11,7 @@ static void FromItoJ(int rank, int i, int j, std::string msg, int argv, char** a
             MPI_Recv(buffer, 100, MPI_CHAR, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             std::cout << "Received message: " << buffer << ", procese's rank = " << rank << ", get message from " << i << std::endl;
         }
-    }
-    else if (j == 0) {
+    } else if (j == 0) {
         if (i == rank) {
             MPI_Send(msg.c_str(), msg.size() + 1, MPI_CHAR, 0, 0, MPI_COMM_WORLD);
         } if (rank == 0) {
@@ -51,7 +50,7 @@ int Task_1_4(int argc, char** argv) {
     //FromItoJ(rank, i, j, message, argc, argv);
 
     //From i to all
-    for (size_t j = 0; j < size; ++j) {
+    for (int j = 0; j < size; j++) {
         if (i != j) {
             FromItoJ(rank, i, j, message, argc, argv);
         }

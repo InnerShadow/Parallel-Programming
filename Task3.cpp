@@ -3,7 +3,7 @@
 #include "includs.hpp"
 
 std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
-unsigned long long int t1;
+static unsigned long long int t1;
 
 static void Get_next_2n_power(int size, int n, int rank, unsigned long long int* A, int q, unsigned long long int* B) {
     unsigned long long int* buffer = new unsigned long long int[n * n / size]{};

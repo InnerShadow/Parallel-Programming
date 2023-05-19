@@ -10,5 +10,6 @@
 #include <exception>
 
 #include "mpi.h"
+#include "omp.h"
 
 #include "Tree.hpp"

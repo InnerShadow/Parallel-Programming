@@ -7,3 +7,6 @@ int Task_3(int argc, char** argv);
 int Task_4(int argc, char** argv, int size);
 
 int Task_1_4(int argc, char** argv);
+int Task_2_1(int argc, char** argv);
+int Task_2_8(int argc, char** argv);
+int task3_3(int argc, char** argv);

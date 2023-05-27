@@ -2,7 +2,7 @@
 #include "includs.hpp"
 #include "Tasks.hpp"
 
-int Task2_3(int argc, char** argv) {
+int Task2_3__(int argc, char** argv) {
 
     int rank = 0;
     int size = 0;

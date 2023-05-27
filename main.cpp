@@ -25,6 +25,8 @@ int main(int argc, char** argv) {
 
     //task3_3(argc, argv);
 
+    //Task2_3(argc, argv);
+
     Task2_3(argc, argv);
 
     return 0;

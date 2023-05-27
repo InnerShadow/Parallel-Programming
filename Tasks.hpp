@@ -15,3 +15,4 @@ int Task2_3(int argc, char** argv);
 int Task4_3(int argc, char** argv);
 int Task4_8(int argc, char** argv);
 
+int kira(int argc, char* argv[]);

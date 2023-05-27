@@ -23,11 +23,13 @@ int main(int argc, char** argv) {
 
     //Task_2_8(argc, argv);
 
-    task3_3(argc, argv);
+    //task3_3(argc, argv);
 
     //Task2_3(argc, argv);
 
     //Task2_3(argc, argv);
+
+    Task4_3(argc, argv);
 
     return 0;
 }

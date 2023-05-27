@@ -23,6 +23,18 @@ static void Matrixmultiplay(int rank, int size, int n, int q, unsigned long long
         recvcounts[i] = n * (n / size + (i >= diffrence));
     }
 
+    if (rank == q) {
+        std::cout << "disp: ";
+        for(size_t i = 0; i < size; ++i){
+            std::cout << displs[i] << "  ";
+        }
+        std::cout << "\nrecvcounts: ";
+        for (size_t i = 0; i < size; ++i) {
+            std::cout << recvcounts[i] << "  ";
+        }
+        std::cout << "\n";
+    }
+
     size_t from = displs[rank] / n;
 
     for (size_t i = from; i < from + amout; ++i) {
@@ -46,25 +58,32 @@ static void Matrixmultiplay(int rank, int size, int n, int q, unsigned long long
 }
 
 static void ConstantMultiplay(int rank, int size, int n, int q, unsigned long long int* A, unsigned long long int* B, unsigned long long int C) {
-    unsigned long long int* buffer = new unsigned long long int[n * n / size]{};
+    int amout = n / size + (rank >= size - (n % size));
+
+    unsigned long long int* buffer = new unsigned long long int[n * amout]{};
 
     int* displs = new int[size];
     int* recvcounts = new int[size];
+
+    int div = n / size;
+
     for (size_t i = 0; i < size; ++i) {
-        displs[i] = i * n / size * n;
-        recvcounts[i] = n * (n / size);
+        int diffrence = size - (n % size);
+        displs[i] = i * div;
+        displs[i] = (i > diffrence) ? displs[i] + (i - diffrence) : displs[i];
+        displs[i] *= n;
+        recvcounts[i] = n * (n / size + (i >= diffrence));
     }
 
     size_t from = displs[rank] / n;
 
-    for (size_t i = from; i < from + n / size; ++i) {
+    for (size_t i = from; i < from + amout; ++i) {
         for (size_t j = 0; j < n; ++j) {
             buffer[(i - from) * n + j] = A[i * n + j] * C;
         }
     }
 
-    MPI_Gatherv(buffer, recvcounts[rank], MPI_UNSIGNED_LONG_LONG, B, recvcounts, displs, MPI_UNSIGNED_LONG_LONG, q,
-        MPI_COMM_WORLD);
+    MPI_Gatherv(buffer, amout * n, MPI_UNSIGNED_LONG_LONG, B, recvcounts, displs, MPI_UNSIGNED_LONG_LONG, q, MPI_COMM_WORLD);
     MPI_Bcast(B, n * n, MPI_UNSIGNED_LONG_LONG, q, MPI_COMM_WORLD);
 
     delete[] recvcounts;
@@ -75,7 +94,7 @@ static void ConstantMultiplay(int rank, int size, int n, int q, unsigned long lo
 int task3_3(int argc, char** argv) {
 
     int q = 0;
-    int n = 8;
+    int n = 500;
 
     MPI_Init(&argc, &argv);
 
@@ -110,14 +129,14 @@ int task3_3(int argc, char** argv) {
     MPI_Bcast(&C, 1, MPI_UNSIGNED_LONG_LONG, q, MPI_COMM_WORLD);
 
     Matrixmultiplay(rank, size, n, q, A, A);
-    //ConstantMultiplay(rank, size, n, q, A, B, C);
+    ConstantMultiplay(rank, size, n, q, A, B, C);
 
     if (rank == q) {
         if (n == 8) {
             std::cout << "B:\n";
             for (size_t i = 0; i < n; ++i) {
                 for (size_t j = 0; j < n; ++j) {
-                    printf("%20llu", A[i * n + j]);
+                    printf("%20llu", B[i * n + j]);
                 }
                 std::cout << "\n";
             }

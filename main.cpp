@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
 
     //Task_1_4(argc, argv);
 
-    kira(argc, argv);
+    //kira(argc, argv);
 
     //Task_1(argc, argv);
 
@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
 
     //Task4_3(argc, argv);
 
-    //Task4_8(argc, argv);
+    Task4_8(argc, argv);
 
     return 0;
 }

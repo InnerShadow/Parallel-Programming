@@ -2,6 +2,30 @@
 #include "Tasks.hpp"
 #include "includs.hpp"
 
+static void ParallelForAxX(unsigned long long int* A, unsigned long long int* X, unsigned long long int* B, int size, int n, int q) {
+    unsigned long long int* tmpA = new unsigned long long int[n] { 0 };
+
+    #pragma omp parallel shared(A, tmpA, B, X)
+    {
+
+        #pragma omp for
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                tmpA[i] += A[i * n + j] * X[j];
+            }
+        }
+
+        #pragma omp barrier
+
+        #pragma omp for
+        for (int i = 0; i < n; ++i) {
+            B[i] = tmpA[i];
+        }
+    }
+
+    delete[] tmpA;
+}
+
 static void AxX(unsigned long long int* A, unsigned long long int* X, unsigned long long int* B, int size, int n, int q) {
 
     unsigned long long int* tmpA = new unsigned long long int[n]{ 0 };
@@ -27,6 +51,29 @@ static void AxX(unsigned long long int* A, unsigned long long int* X, unsigned l
     delete[] tmpA;
 }
 
+static void PAralellForXxA(unsigned long long int* A, unsigned long long int* X, unsigned long long int* B, int size, int n, int q) {
+    unsigned long long int* tmpA = new unsigned long long int[n] { 0 };
+
+    #pragma omp parallel shared(A, tmpA, B, X)
+    {
+        #pragma omp for
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                tmpA[i] += X[i] * A[j * n + i];
+            }
+        }
+
+        #pragma omp barrier
+
+        #pragma omp for
+        for (int i = 0; i < n; ++i) {
+            X[i] = tmpA[i];
+        }
+    }
+
+    delete[] tmpA;
+}
+
 static void XxA(unsigned long long int* A, unsigned long long int* X, unsigned long long int* B, int size, int n, int q) {
     
     unsigned long long int* tmpA = new unsigned long long int[n]{ 0 };
@@ -46,6 +93,28 @@ static void XxA(unsigned long long int* A, unsigned long long int* X, unsigned l
 
         for (size_t i = from; i < from + n / size; ++i) {
             X[i] = tmpA[i];
+        }
+    }
+
+    delete[] tmpA;
+}
+
+static void ParallellForSum(unsigned long long int* X, unsigned long long int* B, int size, int n, int q) {
+    unsigned long long int* tmpA = new unsigned long long int[n] { 0 };
+
+    #pragma omp parallel shared(tmpA, B, X)
+    {
+
+        #pragma omp for
+        for (int i = 0; i < n; ++i) {
+            tmpA[i] += X[i] * B[i];
+        }
+
+        #pragma omp barrier
+
+        #pragma omp for
+        for (int i = 0; i < n; ++i) {
+            B[i] = tmpA[i];
         }
     }
 
@@ -112,9 +181,13 @@ int Task4_8(int argc, char** argv) {
 
     double start_time = omp_get_wtime();
 
-    AxX(A, X, B, size, n, q);
-    XxA(A, X, B, size, n, q);
-    sum(X, B, size, n, q);
+    //AxX(A, X, B, size, n, q);
+    //XxA(A, X, B, size, n, q);
+    //sum(X, B, size, n, q);
+
+    ParallelForAxX(A, X, B, size, n, q);
+    PAralellForXxA(A, X, B, size, n, q);
+    ParallellForSum(X, B, size, n, q);
 
     double end_time = omp_get_wtime();
 

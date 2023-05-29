@@ -2,6 +2,46 @@
 #include "includs.hpp"
 #include "Tasks.hpp"
 
+static void ParalelForMAtrixMultiplay(int size, int n, int q, unsigned long long int* A) {
+    unsigned long long int* tmpA = new unsigned long long int[n * n]{ 0 };
+
+    #pragma omp parallel shared(A, tmpA)
+    {
+
+        #pragma omp for
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                unsigned long long int sum = 0;
+                for (int k = 0; k < n; ++k) {
+                    sum += A[i * n + k] * A[k * n + j];
+                }
+                tmpA[i * n + j] = sum;
+            }
+        }
+
+        #pragma omp barrier
+
+        #pragma omp for
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                A[i * n + j] = tmpA[i * n + j];
+            }
+        }
+
+    }
+
+    std::cout << "A^2:\n";
+    for (size_t i = 0; i < n; ++i) {
+        for (size_t j = 0; j < n; ++j) {
+            std::cout << A[i * n + j] << "   ";
+        }
+        std::cout << "\n";
+    }
+    std::cout << "\n\n";
+
+    delete[] tmpA;
+}
+
 static void Matrixmultiplay(int size, int n, int q, unsigned long long int* A) {
 
     unsigned long long int* tmpA = new unsigned long long int[n * n]{ 0 };
@@ -39,6 +79,33 @@ static void Matrixmultiplay(int size, int n, int q, unsigned long long int* A) {
         std::cout << "\n";
     }
     std::cout << "\n\n";
+
+    delete[] tmpA;
+}
+
+static void ParalellForConstantMultiplay(int size, int n, int q, unsigned long long int* A, unsigned long long int* B, unsigned long long int C) {
+    unsigned long long int* tmpA = new unsigned long long int[n * n]{ 0 };
+
+    #pragma omp parallel shared(A, B, tmpA)
+    {
+
+        #pragma omp for
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                tmpA[i * n + j] = A[i * n + j] * C;
+            }
+        }
+
+        #pragma omp barrier
+
+        #pragma omp for
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                B[i * n + j] = tmpA[i * n + j];
+            }
+        }
+
+    }
 
     delete[] tmpA;
 }
@@ -101,8 +168,11 @@ int Task4_3(int argc, char** argv) {
 
     double start_time = omp_get_wtime();
 
-    Matrixmultiplay(size, n, q, A);
-    ConstantMultiplay(size, n, q, A, B, C);
+    //Matrixmultiplay(size, n, q, A);
+    //ConstantMultiplay(size, n, q, A, B, C);
+
+    ParalelForMAtrixMultiplay(size, n, q, A);
+    ParalellForConstantMultiplay(size, n, q, A, B, C);
 
     double end_time = omp_get_wtime();
 

@@ -5,10 +5,10 @@
 static void ParalelForMAtrixMultiplay(int size, int n, int q, unsigned long long int* A) {
     unsigned long long int* tmpA = new unsigned long long int[n * n]{ 0 };
 
-    #pragma omp parallel shared(A, tmpA)
+#pragma omp parallel shared(A, tmpA)
     {
 
-        #pragma omp for
+#pragma omp for
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
                 unsigned long long int sum = 0;
@@ -19,9 +19,9 @@ static void ParalelForMAtrixMultiplay(int size, int n, int q, unsigned long long
             }
         }
 
-        #pragma omp barrier
+#pragma omp barrier
 
-        #pragma omp for
+#pragma omp for
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
                 A[i * n + j] = tmpA[i * n + j];
@@ -46,7 +46,7 @@ static void Matrixmultiplay(int size, int n, int q, unsigned long long int* A) {
 
     unsigned long long int* tmpA = new unsigned long long int[n * n]{ 0 };
 
-    #pragma omp parallel shared(A, tmpA)
+#pragma omp parallel shared(A, tmpA)
     {
         int rank = omp_get_thread_num();
         int from = rank * n / size;
@@ -61,7 +61,7 @@ static void Matrixmultiplay(int size, int n, int q, unsigned long long int* A) {
             }
         }
 
-        #pragma omp barrier
+#pragma omp barrier
 
         for (size_t i = from; i < from + n / size; ++i) {
             for (size_t j = 0; j < n; ++j) {
@@ -86,19 +86,19 @@ static void Matrixmultiplay(int size, int n, int q, unsigned long long int* A) {
 static void ParalellForConstantMultiplay(int size, int n, int q, unsigned long long int* A, unsigned long long int* B, unsigned long long int C) {
     unsigned long long int* tmpA = new unsigned long long int[n * n]{ 0 };
 
-    #pragma omp parallel shared(A, B, tmpA)
+#pragma omp parallel shared(A, B, tmpA)
     {
 
-        #pragma omp for
+#pragma omp for
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
                 tmpA[i * n + j] = A[i * n + j] * C;
             }
         }
 
-        #pragma omp barrier
+#pragma omp barrier
 
-        #pragma omp for
+#pragma omp for
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
                 B[i * n + j] = tmpA[i * n + j];
@@ -114,7 +114,7 @@ static void ConstantMultiplay(int size, int n, int q, unsigned long long int* A,
 
     unsigned long long int* tmpA = new unsigned long long int[n * n]{ 0 };
 
-    #pragma omp parallel shared(A, B, tmpA)
+#pragma omp parallel shared(A, B, tmpA)
     {
         int rank = omp_get_thread_num();
         int from = rank * n / size;
@@ -124,8 +124,8 @@ static void ConstantMultiplay(int size, int n, int q, unsigned long long int* A,
                 tmpA[i * n + j] = A[i * n + j] * C;
             }
         }
-        
-        #pragma omp barrier
+
+#pragma omp barrier
 
         for (size_t i = from; i < from + n / size; ++i) {
             for (size_t j = 0; j < n; ++j) {
@@ -138,7 +138,7 @@ static void ConstantMultiplay(int size, int n, int q, unsigned long long int* A,
     delete[] tmpA;
 }
 
-int Task4_3(int argc, char** argv) {
+int Task4_5(int argc, char** argv) {
     int q = 0;
     int n = 8;
 
@@ -159,11 +159,13 @@ int Task4_3(int argc, char** argv) {
 
     unsigned long long int C = 0;
     for (size_t i = 0; i < n; ++i) {
-        unsigned long long int mult = 1;
+        unsigned long long int sum = 0;
         for (size_t j = 0; j < n; ++j) {
-            mult *= A[i * n + j];
+            sum += A[i * n + j];
         }
-        C += mult;
+        if (C < sum) {
+            C = sum;
+        }
     }
 
     double start_time = omp_get_wtime();

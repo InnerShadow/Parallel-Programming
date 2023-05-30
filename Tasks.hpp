@@ -14,5 +14,7 @@ int Task2_3__(int argc, char** argv);
 int Task2_3(int argc, char** argv);
 int Task4_3(int argc, char** argv);
 int Task4_8(int argc, char** argv);
+int Task3_5(int argc, char** argv);
+int Task4_5(int argc, char** argv);
 
 int kira(int argc, char* argv[]);

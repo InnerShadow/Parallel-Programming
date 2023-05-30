@@ -33,7 +33,11 @@ int main(int argc, char** argv) {
 
     //Task4_3(argc, argv);
 
-    Task4_8(argc, argv);
+    //Task4_8(argc, argv);
+
+    //Task3_5(argc, argv);
+
+    Task4_5(argc, argv);
 
     return 0;
 }
